@@ -1,43 +1,37 @@
-'use client';
-import { useEffect, useState } from 'react';
-import ProfileForm from '@/components/ProfileForm';
+import { useState } from 'react';
+import FadeIn from '@/components/Animations/FadeIn';
+import ResponsiveContainer from '@/components/Animations/ResponsiveContainer';
 
 export default function AboutPage() {
-  const [profile, setProfile] = useState({ name: '' });
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await fetch('/api/profile');
-        const data = await response.json();
-        setProfile(data);
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
+  const [showName, setShowName] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
-          About {profile.name || 'Us'}
-        </h1>
-        <div className="space-y-8">
-          <section className="prose max-w-none">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Our Story</h2>
-            <p className="text-gray-600 leading-relaxed">
-              We are {profile.name || 'a dedicated team'} committed to creating
-              exceptional digital experiences. With a focus on innovation and
-              user-centric design, we strive to deliver solutions that make a
-              real difference.
+    <ResponsiveContainer>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+        <h1 className="text-4xl font-bold text-gray-800 mb-8">About Us</h1>
+        <button
+          onClick={() => setShowName(!showName)}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          aria-label="Reveal author information"
+        >
+          Meet the Author
+        </button>
+
+        <FadeIn isVisible={showName} className="mt-6">
+          <div className="text-center">
+            <p className="text-2xl font-semibold text-gray-800">
+              Crafted with ❤️ by
+              <span className="block mt-2 text-3xl text-blue-600" role="alert">
+                John Doe
+              </span>
             </p>
-          </section>
-          <ProfileForm />
-        </div>
+            <p className="mt-4 text-gray-600 max-w-md">
+              Passionate developer creating meaningful web experiences
+            </p>
+          </div>
+        </FadeIn>
       </div>
-    </div>
+    </ResponsiveContainer>
   );
 }
