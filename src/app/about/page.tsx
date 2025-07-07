@@ -1,25 +1,43 @@
+'use client';
+import { useEffect, useState } from 'react';
+import ProfileForm from '@/components/ProfileForm';
+
 export default function AboutPage() {
+  const [profile, setProfile] = useState({ name: '' });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch('/api/profile');
+        const data = await response.json();
+        setProfile(data);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
   return (
-    <main className="min-h-screen bg-gray-50 py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">About Our Company</h1>
-        <div className="grid md:grid-cols-2 gap-12">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4">Our History</h2>
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
+          About {profile.name || 'Us'}
+        </h1>
+        <div className="space-y-8">
+          <section className="prose max-w-none">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Our Story</h2>
             <p className="text-gray-600 leading-relaxed">
-              Founded in 2010, we started as a small team passionate about delivering
-              quality content and recipes to food enthusiasts worldwide.
+              We are {profile.name || 'a dedicated team'} committed to creating
+              exceptional digital experiences. With a focus on innovation and
+              user-centric design, we strive to deliver solutions that make a
+              real difference.
             </p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4">Our Mission</h2>
-            <p className="text-gray-600 leading-relaxed">
-              To empower home cooks and professional chefs alike with accessible,
-              well-tested recipes and cooking resources.
-            </p>
-          </div>
+          </section>
+          <ProfileForm />
         </div>
       </div>
-    </main>
+    </div>
   );
 }
