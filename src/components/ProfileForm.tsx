@@ -1,64 +1,58 @@
-'use client';
 import { useState } from 'react';
+import { USER_NAME_API_URL } from '@/config/constants';
 
-export default function ProfileForm() {
+export function ProfileForm() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-
-  const validateName = (input: string) => {
-    if (input.trim().toLowerCase() !== 'usman') {
-      setError('Name must be "Usman"');
-      return false;
-    }
-    setError('');
-    return true;
-  };
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateName(name)) return;
-
     try {
-      const response = await fetch('/api/profile', {
+      const response = await fetch(USER_NAME_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name })
       });
 
-      if (response.ok) {
-        setSuccessMessage('Profile saved successfully!');
-        setTimeout(() => setSuccessMessage(''), 3000);
-      }
-    } catch (error) {
-      setError('Failed to save profile');
+      if (!response.ok) throw new Error('Failed to save name');
+      
+      setSuccess(true);
+      setError('');
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      setError('Failed to save your name. Please try again.');
+      setSuccess(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="bg-gray-100 p-6 rounded-lg max-w-md mx-auto">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Name
+          <label className="block text-gray-700 mb-2" htmlFor="name">
+            Enter your name:
           </label>
           <input
+            id="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your name"
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+            required
           />
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
         >
-          Save Profile
+          Save Name
         </button>
-        {successMessage && (
-          <p className="text-green-500 text-center text-sm">{successMessage}</p>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {success && (
+          <p className="text-green-500 text-sm">
+            Name saved successfully! Check the About page.
+          </p>
         )}
       </form>
     </div>
